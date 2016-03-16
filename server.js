@@ -1,4 +1,5 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 
 var Storage = function() {
 	this.items = [];
@@ -24,4 +25,15 @@ app.get('/items', function(req,res) {
 	res.json(storage.items);
 });
 
-app.listen(8080);
+var jsonParser = bodyParser.json();
+
+app.post('/items', jsonParser, function(req,res) {
+	if (!req.body) {
+		return res.sendStatus(400);
+	}
+
+	var item = storage.add(req.body.name);
+	res.status(201).json(item);
+});
+
+app.listen(process.env.PORT || 8080);
